@@ -2,7 +2,12 @@
 """Entry point for the BetterForces application."""
 
 import os
+import sys
 import uvicorn
+
+# Add project root to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from sources.api.app import create_app
 
 
@@ -21,6 +26,8 @@ def main() -> None:
             reload=True,
             reload_dirs=["/app/sources"],
             factory=True,
+            log_level="info",
+            access_log=True,
         )
     else:
         # For production, use the app object
@@ -29,6 +36,8 @@ def main() -> None:
             app,
             host="0.0.0.0",  # Listen on all interfaces for Docker
             port=8000,
+            log_level="info",
+            access_log=True,
         )
 
 

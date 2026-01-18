@@ -1,12 +1,12 @@
 """Litestar application configuration."""
 
+import redis.asyncio as redis
+import logging
+
 from litestar import Litestar
 from litestar.middleware.rate_limit import RateLimitConfig
 from litestar.openapi import OpenAPIConfig
-from litestar.stores.memory import MemoryStore
-
-# TODO: Add Redis support when infrastructure is ready
-# from litestar.contrib.redis import RedisStore
+from litestar.stores.redis import RedisStore
 
 from sources.api.routes import routes
 from sources.config import settings
@@ -15,10 +15,17 @@ from sources.config import settings
 def create_app() -> Litestar:
     """Create and configure the Litestar application."""
 
-    # Configure stores (using MemoryStore for MVP)
+    # Configure logging - suppress noisy httpx and redis logs
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+
+    # Suppress httpx and redis connection logs as they're too verbose
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("redis").setLevel(logging.WARNING)
+
+    # Configure stores (using RedisStore for production caching)
     stores = {
-        "default": MemoryStore(),
-        "rate_limit": MemoryStore(),
+        "default": RedisStore.with_client(url=settings.redis_url),
+        "rate_limit": RedisStore.with_client(url=settings.redis_url),
     }
 
     # Configure rate limiting

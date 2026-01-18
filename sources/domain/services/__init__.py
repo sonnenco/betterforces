@@ -1,4 +1,4 @@
-"""Domain services for BetterForces."""
+"""Domain services package."""
 
 from .rating_distribution_service import RatingDistributionService
 

@@ -68,7 +68,7 @@ RESTful API that receives data through the public Codeforces API and provides pr
 betterforces/
 ├── sources/                      # All source code
 │   ├── api/                      # API layer
-│   │   ├── app.py                # FastAPI application
+│   │   ├── app.py                # Litestar application
 │   │   ├── routes/               # Route handlers
 │   │   ├── schemas/              # Pydantic schemas
 │   │   └── deps.py               # Dependencies

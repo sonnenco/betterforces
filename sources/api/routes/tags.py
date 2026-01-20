@@ -12,10 +12,10 @@ from sources.services.codeforces_data_service import CodeforcesDataService
 
 
 class TagsController(BaseMetricController):
-    """Controller for tags endpoints."""
+    """Controller for tag ratings endpoints."""
 
-    path = "/tags"
-    tags = ["Tags"]
+    path = "/tag-ratings"
+    tags = ["Tag Ratings"]
 
     @get(
         path="/{handle:str}",
@@ -24,19 +24,20 @@ class TagsController(BaseMetricController):
             "tags_service": tags_service_dependency,
         },
     )
-    async def get_tags(
+    async def get_tag_ratings(
         self, handle: str, data_service: CodeforcesDataService, tags_service: TagsService
     ) -> Response[TagsResponse]:
         """
-        Get user's solved problems analyzed by tags.
+        Get user's average and median rating by problem tags.
 
-        Returns statistics showing average rating for each tag and problem count.
+        Returns performance analysis showing median and average rating for each tag,
+        helping identify strengths and weaknesses in different topics.
 
         Args:
             handle: Codeforces handle
 
         Returns:
-            Tags analysis with average ratings by tag
+            Tag ratings with median and average ratings by tag
         """
         submissions = await data_service.get_user_submissions(handle)
 
@@ -63,7 +64,7 @@ class TagsController(BaseMetricController):
             "tags_service": tags_service_dependency,
         },
     )
-    async def get_weak_tags(
+    async def get_weak_tag_ratings(
         self,
         handle: str,
         data_service: CodeforcesDataService,
@@ -72,20 +73,20 @@ class TagsController(BaseMetricController):
             default=200,
             ge=0,
             le=1000,
-            description="Minimum rating difference to consider a tag 'weak'",
+            description="Minimum rating difference to consider a tag rating 'weak'",
         ),
     ) -> Response[WeakTagsResponse]:
         """
-        Get user's weak tags - topics where average rating is significantly lower.
+        Get user's weak tag ratings - topics where median rating is significantly lower.
 
-        Returns tags that may need more practice based on rating threshold.
+        Returns tags that may need more practice based on rating threshold from overall median.
 
         Args:
             handle: Codeforces handle
-            threshold: Minimum rating difference from overall average to be considered weak
+            threshold: Minimum rating difference from overall median to be considered weak
 
         Returns:
-            Weak tags analysis
+            Weak tag ratings analysis
         """
         submissions = await data_service.get_user_submissions(handle)
 

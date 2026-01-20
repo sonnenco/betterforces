@@ -31,18 +31,18 @@ Identifies problems user attempted but never solved:
 - Groups failed attempts by rating bins to identify difficulty thresholds
 - Provides insights into knowledge gaps and areas needing more practice
 
-### 3. Average Rating by Tag
-For each tag (dp, graphs, greedy, math, etc.) calculates:
+### 3. Tag Ratings Analysis
+For each problem tag (dp, graphs, greedy, math, etc.) provides:
 - Average rating of all solved problems with this tag
-- Median rating for more robust analysis
+- Median rating for robust performance assessment
 - Number of solved problems by tag
-- Percentile relative to the overall average problem rating
+- Relative performance compared to overall rating
 
-### 4. Weak Tags Detection
-Automatically identifies problematic topics:
-- Finds tags where the average rating of solved problems is significantly lower (e.g., 200+ points) than the overall average
-- Ranks weak tags by degree of lag
-- Shows how many problems were solved in weak topics (little practice or actually difficult)
+### 4. Weak Tag Ratings Detection
+Automatically identifies topics needing improvement:
+- Finds tags where the median rating is significantly lower than overall median
+- Ranks problematic topics by performance gap
+- Shows practice volume in weak areas to guide training focus
 
 ## Technical Approach
 
@@ -93,8 +93,8 @@ Base URL: `/`
 - `GET /abandoned-problems/by-tags/{handle}` - Get analysis of problems user attempted but never solved, grouped by tags
 - `GET /abandoned-problems/by-ratings/{handle}` - Get analysis of problems user attempted but never solved, grouped by rating bins
 
-### Tags
-- `GET /tags/{handle}` - Get average and median rating by tags, number of solved problems per tag
-- `GET /tags/{handle}/weak` - Get weak tags analysis with threshold-based filtering
+### Tag Ratings
+- `GET /tag-ratings/{handle}` - Get average and median rating by problem tags, number of solved problems per tag
+- `GET /tag-ratings/{handle}/weak` - Get weak tag ratings analysis with threshold-based filtering
 
 **Response format**: JSON with analytics data and metadata

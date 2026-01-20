@@ -9,6 +9,7 @@ from sources.domain.models.codeforces import Submission, Problem, SubmissionStat
 
 class CodeforcesAPIError(Exception):
     """Exception raised when Codeforces API returns an error."""
+
     pass
 
 
@@ -16,7 +17,7 @@ class CodeforcesClient:
     """Client for interacting with Codeforces API."""
 
     def __init__(self):
-        self.base_url = settings.codeforces_api_base.rstrip('/')
+        self.base_url = settings.codeforces_api_base.rstrip("/")
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
     async def __aenter__(self):
@@ -74,7 +75,7 @@ class CodeforcesClient:
                     index=raw_problem.get("index", ""),
                     name=raw_problem.get("name", ""),
                     rating=raw_problem.get("rating"),
-                    tags=raw_problem.get("tags", [])
+                    tags=raw_problem.get("tags", []),
                 )
 
                 # Parse verdict
@@ -91,7 +92,7 @@ class CodeforcesClient:
                     creation_time_seconds=raw_submission.get("creationTimeSeconds", 0),
                     problem=problem,
                     verdict=verdict,
-                    programming_language=raw_submission.get("programmingLanguage", "")
+                    programming_language=raw_submission.get("programmingLanguage", ""),
                 )
 
                 submissions.append(submission)

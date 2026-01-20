@@ -27,12 +27,7 @@ class TagsService:
         successful_submissions = [s for s in submissions if s.is_solved]
 
         if not successful_submissions:
-            return TagsAnalysis(
-                handle=handle,
-                tags=[],
-                overall_average_rating=0,
-                total_solved=0
-            )
+            return TagsAnalysis(handle=handle, tags=[], overall_average_rating=0, total_solved=0)
 
         # Remove duplicate problems (keep first solve)
         unique_solves = TagsService._deduplicate_problems(successful_submissions)
@@ -52,7 +47,7 @@ class TagsService:
                     tag=tag,
                     average_rating=round(avg_rating, 1),
                     problem_count=len(tag_ratings),
-                    problems=sorted(problems)
+                    problems=sorted(problems),
                 )
                 tags_info.append(tag_info)
 
@@ -63,7 +58,7 @@ class TagsService:
             handle=handle,
             tags=tags_info,
             overall_average_rating=round(overall_average, 1),
-            total_solved=len(unique_solves)
+            total_solved=len(unique_solves),
         )
 
     @staticmethod

@@ -14,20 +14,31 @@ class Settings(BaseSettings):
     dev_mode: bool = Field(default=False, description="Enable development mode with hot reload")
 
     # Codeforces API settings
-    codeforces_api_base: str = Field(default="https://codeforces.com/api", description="Base URL for Codeforces API")
+    codeforces_api_base: str = Field(
+        default="https://codeforces.com/api", description="Base URL for Codeforces API"
+    )
 
     # Cache settings
-    cache_ttl: int = Field(default=4 * 60 * 60, description="Cache TTL in seconds (4 hours default)")
+    cache_ttl: int = Field(
+        default=4 * 60 * 60, description="Cache TTL in seconds (4 hours default)"
+    )
 
     # Rate limiting settings
-    rate_limit_requests: int = Field(default=100, description="Number of requests allowed per period")
-    rate_limit_period: str = Field(default="hour", description="Rate limit period ('second', 'minute', 'hour', 'day')")
+    rate_limit_requests: int = Field(
+        default=100, description="Number of requests allowed per period"
+    )
+    rate_limit_period: str = Field(
+        default="hour", description="Rate limit period ('second', 'minute', 'hour', 'day')"
+    )
 
     # User settings
-    codeforces_user_handle: str = Field(default="", description="Default Codeforces user handle for testing")
+    codeforces_user_handle: str = Field(
+        default="", description="Default Codeforces user handle for testing"
+    )
 
     class Config:
         """Pydantic config."""
+
         env_file = ".env"
         env_file_encoding = "utf-8"
 

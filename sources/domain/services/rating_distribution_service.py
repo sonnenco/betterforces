@@ -11,8 +11,7 @@ class RatingDistributionService:
 
     @staticmethod
     def analyze_rating_distribution(
-        handle: str,
-        submissions: List[Submission]
+        handle: str, submissions: List[Submission]
     ) -> RatingDistribution:
         """
         Analyze user's solved problems and create rating distribution over time.
@@ -33,7 +32,7 @@ class RatingDistributionService:
                 rating_points=[],
                 max_rating_achieved=0,
                 total_solved=0,
-                rating_growth_periods=[]
+                rating_growth_periods=[],
             )
 
         # Remove duplicate problems (keep first solve)
@@ -53,7 +52,7 @@ class RatingDistributionService:
             rating_points=rating_points,
             max_rating_achieved=max_rating,
             total_solved=len(rating_points),
-            rating_growth_periods=growth_periods
+            rating_growth_periods=growth_periods,
         )
 
     @staticmethod
@@ -83,7 +82,7 @@ class RatingDistributionService:
                 rating_point = RatingPoint(
                     timestamp=submission.creation_time_seconds,
                     rating=submission.problem.rating,
-                    problem_name=submission.problem.name
+                    problem_name=submission.problem.name,
                 )
                 rating_points.append(rating_point)
 

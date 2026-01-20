@@ -6,17 +6,23 @@ from pydantic import BaseModel, Field
 
 class TagInfo(BaseModel):
     """Information about a single tag."""
+
     tag: str = Field(..., description="The tag name")
-    average_rating: float = Field(..., description="Average rating of all solved problems with this tag")
+    average_rating: float = Field(
+        ..., description="Average rating of all solved problems with this tag"
+    )
     problem_count: int = Field(..., description="Number of solved problems with this tag")
     problems: List[str] = Field(..., description="Names of solved problems with this tag")
 
 
 class TagsAnalysis(BaseModel):
     """Analysis of user's problem-solving activity by tags."""
+
     handle: str = Field(..., description="Codeforces handle")
     tags: List[TagInfo] = Field(..., description="List of tags analysis")
-    overall_average_rating: float = Field(..., description="Overall average rating of all solved problems")
+    overall_average_rating: float = Field(
+        ..., description="Overall average rating of all solved problems"
+    )
     total_solved: int = Field(..., description="Total number of problems solved")
 
     def get_weak_tags(self, threshold_diff: int = 200) -> List[TagInfo]:

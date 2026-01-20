@@ -14,6 +14,7 @@ from sources.api.app import create_app
 def main() -> None:
     """Run the application."""
     from sources.config import settings
+
     # Enable reload in development mode
     reload_mode = settings.dev_mode
 

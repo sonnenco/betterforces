@@ -7,6 +7,7 @@ from enum import Enum
 
 class SubmissionStatus(str, Enum):
     """Submission status enumeration."""
+
     OK = "OK"  # Accepted
     WRONG_ANSWER = "WRONG_ANSWER"
     TIME_LIMIT_EXCEEDED = "TIME_LIMIT_EXCEEDED"
@@ -18,6 +19,7 @@ class SubmissionStatus(str, Enum):
 
 class Problem(BaseModel):
     """Codeforces problem model."""
+
     contest_id: int
     index: str
     name: str
@@ -32,6 +34,7 @@ class Problem(BaseModel):
 
 class Submission(BaseModel):
     """Codeforces submission model."""
+
     id: int
     contest_id: int
     creation_time_seconds: int

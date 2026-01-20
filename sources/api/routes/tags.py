@@ -20,16 +20,15 @@ class TagsController(Controller):
     path = "/tags"
     tags = ["Tags"]
 
-    @get(path="/{handle:str}",
-         dependencies={
-             "data_service": codeforces_data_service_dependency,
-             "tags_service": tags_service_dependency
-         })
+    @get(
+        path="/{handle:str}",
+        dependencies={
+            "data_service": codeforces_data_service_dependency,
+            "tags_service": tags_service_dependency,
+        },
+    )
     async def get_tags(
-        self,
-        handle: str,
-        data_service: CodeforcesDataService,
-        tags_service: TagsService
+        self, handle: str, data_service: CodeforcesDataService, tags_service: TagsService
     ) -> Response[TagsResponse]:
         """
         Get user's solved problems analyzed by tags.
@@ -50,7 +49,7 @@ class TagsController(Controller):
                 raise HTTPException(
                     status_code=HTTP_404_NOT_FOUND,
                     detail=f"No submissions found for user '{handle}'",
-                    extra={"handle": handle}
+                    extra={"handle": handle},
                 )
 
             # Analyze tags
@@ -59,9 +58,7 @@ class TagsController(Controller):
             # Convert to response schema
             tags_info = [
                 SimpleTagInfoSchema(
-                    tag=tag.tag,
-                    average_rating=tag.average_rating,
-                    problem_count=tag.problem_count
+                    tag=tag.tag, average_rating=tag.average_rating, problem_count=tag.problem_count
                 )
                 for tag in tags_analysis.tags
             ]
@@ -71,16 +68,16 @@ class TagsController(Controller):
                     tags=tags_info,
                     overall_average_rating=tags_analysis.overall_average_rating,
                     total_solved=tags_analysis.total_solved,
-                    last_updated=datetime.now(timezone.utc)
+                    last_updated=datetime.now(timezone.utc),
                 ),
-                headers={"Cache-Control": "public, max-age=14400"}  # 4 hours like our TTL
+                headers={"Cache-Control": "public, max-age=14400"},  # 4 hours like our TTL
             )
 
         except CodeforcesAPIError as e:
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to fetch data from Codeforces API: {str(e)}",
-                extra={"handle": handle, "error": str(e)}
+                extra={"handle": handle, "error": str(e)},
             )
         except HTTPException:
             raise
@@ -88,20 +85,27 @@ class TagsController(Controller):
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Internal server error: {str(e)}",
-                extra={"handle": handle, "error": str(e)}
+                extra={"handle": handle, "error": str(e)},
             )
 
-    @get(path="/{handle:str}/weak",
-         dependencies={
-             "data_service": codeforces_data_service_dependency,
-             "tags_service": tags_service_dependency
-         })
+    @get(
+        path="/{handle:str}/weak",
+        dependencies={
+            "data_service": codeforces_data_service_dependency,
+            "tags_service": tags_service_dependency,
+        },
+    )
     async def get_weak_tags(
         self,
         handle: str,
         data_service: CodeforcesDataService,
         tags_service: TagsService,
-        threshold: int = Parameter(default=200, ge=0, le=1000, description="Minimum rating difference to consider a tag 'weak'")
+        threshold: int = Parameter(
+            default=200,
+            ge=0,
+            le=1000,
+            description="Minimum rating difference to consider a tag 'weak'",
+        ),
     ) -> Response[WeakTagsResponse]:
         """
         Get user's weak tags - topics where average rating is significantly lower.
@@ -123,7 +127,7 @@ class TagsController(Controller):
                 raise HTTPException(
                     status_code=HTTP_404_NOT_FOUND,
                     detail=f"No submissions found for user '{handle}'",
-                    extra={"handle": handle}
+                    extra={"handle": handle},
                 )
 
             # Analyze tags
@@ -135,9 +139,7 @@ class TagsController(Controller):
             # Convert to response schema
             weak_tags_info = [
                 SimpleTagInfoSchema(
-                    tag=tag.tag,
-                    average_rating=tag.average_rating,
-                    problem_count=tag.problem_count
+                    tag=tag.tag, average_rating=tag.average_rating, problem_count=tag.problem_count
                 )
                 for tag in weak_tags
             ]
@@ -148,16 +150,16 @@ class TagsController(Controller):
                     overall_average_rating=tags_analysis.overall_average_rating,
                     total_solved=tags_analysis.total_solved,
                     threshold_used=threshold,
-                    last_updated=datetime.now(timezone.utc)
+                    last_updated=datetime.now(timezone.utc),
                 ),
-                headers={"Cache-Control": "public, max-age=14400"}  # 4 hours like our TTL
+                headers={"Cache-Control": "public, max-age=14400"},  # 4 hours like our TTL
             )
 
         except CodeforcesAPIError as e:
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to fetch data from Codeforces API: {str(e)}",
-                extra={"handle": handle, "error": str(e)}
+                extra={"handle": handle, "error": str(e)},
             )
         except HTTPException:
             raise
@@ -165,5 +167,5 @@ class TagsController(Controller):
             raise HTTPException(
                 status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Internal server error: {str(e)}",
-                extra={"handle": handle, "error": str(e)}
+                extra={"handle": handle, "error": str(e)},
             )

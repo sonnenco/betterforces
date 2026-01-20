@@ -15,7 +15,7 @@ def create_app() -> Litestar:
     """Create and configure the Litestar application."""
 
     # Configure logging
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     # Configure stores (using RedisStore for production caching)
     stores = {

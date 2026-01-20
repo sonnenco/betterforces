@@ -1,5 +1,7 @@
 """Application configuration using Pydantic settings."""
 
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
@@ -27,8 +29,8 @@ class Settings(BaseSettings):
     rate_limit_requests: int = Field(
         default=100, description="Number of requests allowed per period"
     )
-    rate_limit_period: str = Field(
-        default="hour", description="Rate limit period ('second', 'minute', 'hour', 'day')"
+    rate_limit_period: Literal["second", "minute", "hour", "day"] = Field(
+        default="hour", description="Rate limit period"
     )
 
     # User settings

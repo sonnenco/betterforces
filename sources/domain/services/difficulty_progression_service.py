@@ -3,7 +3,7 @@
 from collections import defaultdict
 from datetime import datetime, timezone
 from statistics import mean
-from typing import Dict, List
+from typing import Dict, List, cast
 
 from sources.domain.models.codeforces import Submission
 from sources.domain.models.difficulty_progression import (
@@ -125,7 +125,7 @@ class DifficultyProgressionService(BaseMetricService):
             rated_submissions = [s for s in period_submissions if s.problem.rating is not None]
 
             if rated_submissions:
-                ratings = [s.problem.rating for s in rated_submissions]
+                ratings = [cast(int, s.problem.rating) for s in rated_submissions]
                 avg_rating = mean(ratings)
 
                 if period_type == "month":

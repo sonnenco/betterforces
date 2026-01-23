@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-install-project --no-dev
 
 # Copy source code
-COPY sources/ ./sources/
+COPY backend/ ./backend/
 COPY pyproject.toml uv.lock ./
 
 # Install the project
@@ -49,9 +49,9 @@ ENV PATH="/.venv/bin:$PATH" \
 WORKDIR /app
 
 # Copy application code
-COPY sources/ ./sources/
+COPY backend/ ./backend/
 
 EXPOSE 8000
 
 # Run the application
-CMD ["python", "-m", "sources.main"]
+CMD ["python", "-m", "backend.main"]

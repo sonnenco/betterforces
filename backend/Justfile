@@ -1,0 +1,29 @@
+default:
+    @just --list
+
+test:
+    uv run pytest
+
+test-coverage:
+    uv run pytest --cov=backend --cov-report=term-missing
+
+format:
+    uv run ruff format .
+
+lint:
+    uv run ruff check .
+
+lintfix:
+    uv run ruff check --fix .
+
+typecheck:
+    uv run ty check
+
+check:
+    @uv run ruff check .
+    @uv run ty check
+
+clean:
+    rm -rf .pytest_cache .ruff_cache __pycache__
+    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    find . -type f -name "*.pyc" -delete 2>/dev/null || true

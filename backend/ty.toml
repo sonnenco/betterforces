@@ -1,0 +1,5 @@
+# Ty type checker configuration
+
+[environment]
+# Set the parent directory as the source root so 'backend' imports work
+root = [".."]

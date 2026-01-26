@@ -3,13 +3,17 @@
 ![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)
 ![Litestar](https://img.shields.io/badge/Litestar-green?style=for-the-badge&logo=lightning)
 ![UV](https://img.shields.io/badge/UV-red?style=for-the-badge&logo=python)
+![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=for-the-badge&logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-yellow?style=for-the-badge&logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-cyan?style=for-the-badge&logo=tailwind-css)
+![Chart.js](https://img.shields.io/badge/Chart.js-red?style=for-the-badge&logo=chartjs)
+![Node.js](https://img.shields.io/badge/Node.js-20+-green?style=for-the-badge&logo=node.js)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensource)
 
-## Project Idea
+**API for analyzing Codeforces profiles that provides useful statistics for improving competitive programming skills.**
 
-API for analyzing Codeforces profiles that provides useful statistics for improving competitive programming skills.
-
-## Goal
+## Project Goal
 
 Help competitive programmers and their coaches:
 - Identify weak spots in training
@@ -19,205 +23,122 @@ Help competitive programmers and their coaches:
 
 ## Core Features
 
-### 1. Difficulty Distribution
-Analyzes the distribution of solved problems by difficulty levels:
-- Groups solved problems into rating bins (800, 900, 1000, 1100, etc.)
-- Shows the count of solved problems in each bin
-- Helps understand problem-solving patterns across different difficulty ranges
+### Difficulty Distribution
+Analyzes the distribution of solved problems by difficulty levels (800, 900, 1000, 1100, etc.).
 
-### 2. Abandoned Problems Analysis
-Identifies problems user attempted but never solved:
-- Groups failed attempts by tags to find problematic topics
-- Groups failed attempts by rating bins to identify difficulty thresholds
-- Provides insights into knowledge gaps and areas needing more practice
+### Abandoned Problems Analysis
+Identifies problems user attempted but never solved, grouped by tags and rating bins.
 
-### 3. Tag Ratings Analysis
-For each problem tag (dp, graphs, greedy, math, etc.) provides:
-- Average rating of all solved problems with this tag
-- Median rating for robust performance assessment
-- Number of solved problems by tag
-- Relative performance compared to overall rating
+### Tag Ratings Analysis
+Provides average/median rating by problem tags (dp, graphs, greedy, math, etc.).
 
-### 4. Weak Tag Ratings Detection
-Automatically identifies topics needing improvement:
-- Finds tags where the median rating is significantly lower than overall median
-- Ranks problematic topics by performance gap
-- Shows practice volume in weak areas to guide training focus
-
-## Technical Approach
-
-RESTful API that receives data through the public Codeforces API and provides processed analytics.
-
-## Architecture
-
-- **Monorepo**: Backend (Python/Litestar) + Frontend (React/TypeScript)
-- **Redis storage**: Used for rate limiting, no data persistence for MVP
-- **On-demand data fetching**: Fetches fresh data from Codeforces API for each request
-- **Clean Architecture**: Separated into layers (api/, domain/, infrastructure/, services/)
-
-## Project Structure
-
-```
-betterforces/
-├── backend/                      # Backend source code
-│   ├── api/                      # API layer
-│   │   ├── app.py                # Litestar application
-│   │   ├── routes/               # Route handlers
-│   │   ├── schemas/              # Pydantic schemas
-│   │   └── deps.py               # Dependencies
-│   ├── domain/                   # Business logic layer
-│   │   ├── models/               # Data models
-│   │   └── services/             # Business services
-│   ├── infrastructure/           # Infrastructure layer
-│   │   ├── codeforces_client.py  # Codeforces API client
-│   │   └── redis_client.py       # Redis cache client
-│   ├── services/                 # Application services
-│   │   └── codeforces_data_service.py  # Data synchronization service
-│   ├── config.py                 # Application configuration
-│   └── main.py                   # Entry point
-├── frontend/                     # Frontend source code (React + TypeScript)
-│   ├── src/                      # Source files
-│   ├── public/                   # Static assets
-│   └── package.json              # Node.js dependencies
-├── tests/                        # Unit and integration tests
-├── pyproject.toml                # Python dependencies and project configuration
-├── uv.lock                       # UV lock file
-├── docker-compose.yml            # Docker Compose configuration
-├── README.md                     # This file
-└── LICENSE                       # License
-```
+### Weak Tag Ratings Detection
+Automatically identifies topics needing improvement with threshold-based filtering.
 
 ## API Endpoints
 
-Base URL: `/`
+All endpoints accept a Codeforces handle as a path parameter and return JSON analytics data.
 
-### Difficulty Distribution
-- `GET /difficulty-distribution/{handle}` - Get problem distribution by difficulty levels (800, 900, 1000...), showing count of solved problems in each bin
+- `GET /difficulty-distribution/{handle}` - Problem count by rating bins (800-3000)
+- `GET /tag-ratings/{handle}` - Average/median ratings per problem tag
+- `GET /tag-ratings/{handle}/weak` - Weak areas with performance gaps
+- `GET /abandoned-problems/by-tags/{handle}` - Failed attempts grouped by tags
+- `GET /abandoned-problems/by-ratings/{handle}` - Failed attempts grouped by difficulty
 
-### Abandoned Problems
-- `GET /abandoned-problems/by-tags/{handle}` - Get analysis of problems user attempted but never solved, grouped by tags
-- `GET /abandoned-problems/by-ratings/{handle}` - Get analysis of problems user attempted but never solved, grouped by rating bins
+## Technology Stack
 
-### Tag Ratings
-- `GET /tag-ratings/{handle}` - Get average and median rating by problem tags, number of solved problems per tag
-- `GET /tag-ratings/{handle}/weak` - Get weak tag ratings analysis with threshold-based filtering
+### Backend
+- **Python 3.13+** - Core language
+- **Litestar** - Async web framework
+- **Redis** - Caching and rate limiting
+- **UV** - Package manager
 
-**Response format**: JSON with analytics data and metadata
+### Frontend
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Utility-first styling
+- **Chart.js** - Data visualizations
+
+### Development
+- **Docker & Docker Compose** - Container orchestration
+- **Just** - Command runner for development tasks
 
 ## Getting Started
 
 ### Prerequisites
-
-- **Docker & Docker Compose** (recommended) OR
-- **Python 3.13+** with `uv` package manager
-- **Node.js 20+** with `npm`
-- **Redis** (for backend)
+- Docker & Docker Compose (recommended) OR Python 3.13+ with `uv` + Node.js 20+ with `npm` + Redis
 
 ### Quick Start with Docker
-
-The easiest way to run the entire stack:
-
 ```bash
-# Clone the repository
 git clone https://github.com/yourusername/betterforces.git
 cd betterforces
-
-# Copy environment variables
 cp .env.example .env
-
-# Start all services (backend, frontend, redis)
 docker-compose up -d
 
-# Access the application
+# Access at:
 # Frontend: http://localhost:3000
 # Backend API: http://localhost:8000
-# API Docs: http://localhost:8000/schema
+# API Docs: http://localhost:8000/schema/swagger
 ```
 
 ### Local Development
-
-#### Backend Setup
-
 ```bash
-# Install UV package manager
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
 # Install dependencies
-uv sync
+just install
 
-# Start Redis (using Docker)
+# Start Redis
 docker run -d -p 6379:6379 redis:7-alpine
 
-# Run backend server
-uv run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+# Start backend (from backend/ dir)
+cd backend && just dev
+
+# Start frontend (from frontend/ dir)
+cd ../frontend && just dev
 ```
 
-Backend will be available at `http://localhost:8000`
+## Contributing
 
-#### Frontend Setup
+We welcome contributions! Here's how to get started:
 
-```bash
-cd frontend
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/awesome-feature`)
+3. **Make your changes**
+4. **Run tests and linting**:
+   - Backend: `cd backend && just check && just test`
+   - Frontend: `cd frontend && just lint && just typecheck`
+5. **Commit your changes** (`git commit -m "Add awesome feature"`)
+6. **Push to your branch** (`git push origin feature/awesome-feature`)
+7. **Open a pull request**
 
-# Install dependencies
-npm install
+### Development Commands
 
-# Start development server
-npm run dev
-```
+**Project Level:**
+- `just` - List all commands
+- `just up` - Start full stack with Docker
+- `just down` - Stop services
+- `just logs` - View container logs
 
-Frontend will be available at `http://localhost:3000`
+**Backend (from backend/ dir):**
+- `just dev` - Run development server
+- `just test` - Run tests
+- `just lint` - Check code style
+- `just check` - Lint + typecheck
 
-### Configuration
+**Frontend (from frontend/ dir):**
+- `just dev` - Run development server
+- `just build` - Build for production
+- `just lint` - Check code style
+- `just typecheck` - TypeScript check
 
-Backend configuration via `.env` file:
+### Architecture
 
-```bash
-# Redis
-REDIS_URL=redis://localhost:6379/0
+The project follows clean/layered architecture with strict separation:
+- **API Layer** - Route handlers, schemas, dependencies
+- **Domain Layer** - Pure business logic (no external deps)
+- **Infrastructure Layer** - External service integrations
+- **Application Services** - Orchestration between layers
 
-# Codeforces API
-CODEFORCES_API_BASE=https://codeforces.com/api
+---
 
-# Cache settings
-CACHE_TTL=14400  # 4 hours
-
-# Rate limiting
-RATE_LIMIT_REQUESTS=100
-RATE_LIMIT_PERIOD=hour
-
-# CORS (for local development)
-CORS_ALLOWED_ORIGINS=["http://localhost:3000"]
-```
-
-### Usage
-
-1. Open the frontend at `http://localhost:3000`
-2. Enter a Codeforces handle (e.g., `tourist`, `Petr`, `Errichto`)
-3. Click "Analyze" to fetch and visualize metrics
-4. Explore the different charts:
-   - **Difficulty Distribution**: See which rating ranges you solve most
-   - **Tag Ratings**: Understand your strengths across different topics
-   - **Weak Tags**: Identify areas that need more practice
-   - **Abandoned Problems**: Find patterns in problems you gave up on
-
-### API Documentation
-
-Interactive API documentation is available at:
-- **Swagger UI**: `http://localhost:8000/schema/swagger`
-- **ReDoc**: `http://localhost:8000/schema/redoc`
-- **OpenAPI JSON**: `http://localhost:8000/schema/openapi.json`
-
-### Building for Production
-
-```bash
-# Build frontend
-cd frontend
-npm run build
-
-# Build Docker images
-docker-compose build
-
-# Run production stack
-docker-compose up -d
-```
+BetterForces is open-source under the MIT License. Happy coding! 🚀

@@ -44,10 +44,7 @@ class TagsController(BaseMetricController):
         try:
             submissions = await data_service.get_user_submissions(handle)
         except UserNotFoundError:
-            raise HTTPException(
-                status_code=404,
-                detail=f"User '{handle}' not found on Codeforces"
-            )
+            raise HTTPException(status_code=404, detail=f"User '{handle}' not found on Codeforces")
 
         self._validate_submissions_exist(submissions, handle)
 

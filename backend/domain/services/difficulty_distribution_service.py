@@ -61,7 +61,9 @@ class DifficultyDistributionService(BaseMetricService):
             DifficultyDistribution with analyzed data
         """
         # Filter successful submissions
-        successful_submissions = DifficultyDistributionService._filter_successful_submissions(submissions)
+        successful_submissions = DifficultyDistributionService._filter_successful_submissions(
+            submissions
+        )
 
         if not successful_submissions:
             return DifficultyDistribution(

@@ -29,11 +29,4 @@ clean:
 
 # Deploy with production configuration (nginx-proxy-manager integration)
 prod-run:
-    @echo "Setting up nginx networks..."
-    @bash setup-nginx-networks.sh
-    @echo ""
-    @echo "Deploying services..."
     docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-    @echo ""
-    @echo "✓ Deployment complete!"
-    @echo "Service endpoints: frontend:80, backend:8000"

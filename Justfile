@@ -26,7 +26,3 @@ logs:
 # Stop services and remove volumes/images
 clean:
     docker compose down -v --rmi local
-
-# Deploy with production configuration (nginx-proxy-manager integration)
-prod-run:
-    docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build

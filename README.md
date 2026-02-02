@@ -15,26 +15,49 @@
 ![Build](https://github.com/deyna256/betterforces/actions/workflows/build.yml/badge.svg)
 ![Website](https://img.shields.io/website?url=https://betterforces.deyna.xyz)
 
-**Analytics for Codeforces Profiles**
+**Identify Your Weak Spots in Competitive Programming**
 
-Helps competitive programmers and coaches identify weak spots, track progress, and improve skills through detailed statistics.
+Track your Codeforces progress, discover knowledge gaps, and improve faster with detailed analytics.
 
-**[🌐 Live Demo](https://betterforces.deyna.xyz/)**
+**[🌐 Live Demo](https://betterforces.deyna.xyz/)** | **[📖 Documentation](docs/)** | **[🔌 API Reference](docs/API.md)**
 
 </div>
 
 ---
 
-## Table of Contents
+## Why BetterForces?
 
-- [Features](#features)
-- [Quick Start](#quick-start)
-- [API](#api)
-  - [Endpoints](#endpoints)
-  - [Response Examples](#response-examples)
-- [Architecture](#architecture)
-- [Development](#development)
-- [Commands](#commands)
+**The Problem**: You solve hundreds of problems on Codeforces, but don't know which topics need improvement or where to focus your practice.
+
+**The Solution**: BetterForces automatically analyzes your profile to reveal:
+
+- **Weak Topics** - Which algorithms and data structures you struggle with
+- **Abandoned Problems** - Problems you attempted but never solved (great practice targets!)
+- **Difficulty Progression** - How your skills have grown across rating ranges
+- **Tag Statistics** - Your average performance on each problem type
+
+Stop guessing where to improve. Start practicing smarter.
+
+### Demo
+
+<!-- Add demo GIF: docs/images/demo.gif -->
+<!-- Shows: User entering handle, data loading, charts appearing -->
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/deyna256/betterforces.git
+cd betterforces
+cp .env.example .env
+just build
+just up
+```
+
+Open **http://localhost:3000** and enter any Codeforces handle to see their analytics.
+
+That's it! 🚀
 
 ---
 
@@ -42,246 +65,114 @@ Helps competitive programmers and coaches identify weak spots, track progress, a
 
 | Feature | Description |
 |---------|-------------|
-| **Difficulty Distribution** | How many problems solved at each rating (800-3000) |
-| **Tag Analysis** | Average/median rating by topic (dp, graphs, greedy, etc.) |
-| **Weak Topics** | Automatically identifies topics needing improvement |
-| **Abandoned Problems** | Problems attempted but never solved |
+| **Difficulty Distribution** | Visualize how many problems you've solved at each rating level (800-3000) |
+| **Tag Analysis** | See your average and median rating for each topic (DP, graphs, greedy, etc.) |
+| **Weak Topics Detection** | Automatically identifies topics where your performance is below average |
+| **Abandoned Problems** | Tracks problems you attempted but never solved, grouped by tags or difficulty |
+| **Smart Caching** | Instant responses with stale-while-revalidate pattern (4-hour fresh cache, 24-hour stale) |
+| **Rate-Limited Worker** | Respects Codeforces API limits (5 req/sec) with async task processing |
 
 ---
 
-## Quick Start
+## Screenshots
 
-### Docker (recommended)
+### Main Dashboard
+<!-- Add screenshot: docs/images/dashboard.png -->
+<!-- Shows: Full dashboard with all analytics -->
 
-```bash
-git clone https://github.com/yourusername/betterforces.git
-cd betterforces
-cp .env.example .env
-just build
-just up
-```
+### Difficulty Distribution Chart
+<!-- Add screenshot: docs/images/difficulty-distribution.png -->
+<!-- Shows: Bar chart with problem count by rating (800-3000) -->
 
-- Frontend: http://localhost:3000
-- API: http://localhost:8000
-- API Docs: http://localhost:8000/schema/swagger
+### Tag Analysis Radar
+<!-- Add screenshot: docs/images/tag-radar.png -->
+<!-- Shows: Radar chart with performance across different topics -->
 
-### Local Development
+### Weak Topics Detection
+<!-- Add screenshot: docs/images/weak-topics.png -->
+<!-- Shows: List of weak topics with statistics -->
 
-```bash
-# Install dependencies
-just install
-
-# Start Redis
-docker run -d -p 6379:6379 redis:7-alpine
-
-# Backend
-cd backend && just dev
-
-# Frontend (in another terminal)
-cd frontend && just dev
-```
+### Abandoned Problems
+<!-- Add screenshot: docs/images/abandoned-problems.png -->
+<!-- Shows: Problems attempted but not solved, grouped by tags -->
 
 ---
 
-## API
+## Tech Stack
 
-All endpoints accept a Codeforces handle as a path parameter and return JSON analytics.
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/difficulty-distribution/{handle}` | Distribution of solved problems by rating |
-| `GET` | `/tag-ratings/{handle}` | Tag statistics (average/median rating) |
-| `GET` | `/tag-ratings/{handle}/weak` | Weak topics (with `?threshold=200` parameter) |
-| `GET` | `/abandoned-problems/by-tags/{handle}` | Abandoned problems grouped by tags |
-| `GET` | `/abandoned-problems/by-ratings/{handle}` | Abandoned problems grouped by rating |
-
-### Response Examples
-
-#### Difficulty Distribution
-
-```bash
-GET /difficulty-distribution/tourist
-```
-
-```json
-{
-  "ranges": [
-    {"rating": 800, "problem_count": 42},
-    {"rating": 900, "problem_count": 38},
-    {"rating": 1000, "problem_count": 45}
-  ],
-  "total_solved": 3157,
-  "last_updated": "2026-01-30T12:34:56"
-}
-```
-
-#### Tag Statistics
-
-```bash
-GET /tag-ratings/tourist
-```
-
-```json
-{
-  "tags": [
-    {"tag": "dp", "average_rating": 2150.5, "median_rating": 2100, "problem_count": 156},
-    {"tag": "graphs", "average_rating": 2080.3, "median_rating": 2000, "problem_count": 142}
-  ],
-  "overall_average_rating": 1980.5,
-  "overall_median_rating": 1900,
-  "total_solved": 3157,
-  "last_updated": "2026-01-30T12:34:56"
-}
-```
-
-#### Weak Topics
-
-```bash
-GET /tag-ratings/tourist/weak?threshold=200
-```
-
-```json
-{
-  "weak_tags": [
-    {"tag": "geometry", "average_rating": 1650.0, "median_rating": 1600, "problem_count": 23}
-  ],
-  "overall_average_rating": 1980.5,
-  "overall_median_rating": 1900,
-  "total_solved": 3157,
-  "threshold_used": 200,
-  "last_updated": "2026-01-30T12:34:56"
-}
-```
-
-#### Abandoned Problems by Tags
-
-```bash
-GET /abandoned-problems/by-tags/tourist
-```
-
-```json
-{
-  "tags": [
-    {"tag": "dp", "problem_count": 5, "total_failed_attempts": 18},
-    {"tag": "trees", "problem_count": 3, "total_failed_attempts": 12}
-  ],
-  "total_abandoned_problems": 23,
-  "last_updated": "2026-01-30T12:34:56"
-}
-```
-
-#### Abandoned Problems by Rating
-
-```bash
-GET /abandoned-problems/by-ratings/tourist
-```
-
-```json
-{
-  "ratings": [
-    {"rating": 2400, "problem_count": 8, "total_failed_attempts": 31},
-    {"rating": 2600, "problem_count": 5, "total_failed_attempts": 22}
-  ],
-  "total_abandoned_problems": 23,
-  "last_updated": "2026-01-30T12:34:56"
-}
-```
+- **Backend**: Python 3.13, Litestar (async web framework), Redis (caching + task queue)
+- **Worker**: Python 3.13, async task processor with rate limiting
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Chart.js
+- **Tooling**: UV package manager, Docker Compose, Just (command runner)
 
 ---
 
-## Architecture
+## Documentation
 
-### Backend (Clean Architecture)
-
-```
-backend/
-├── api/              # API Layer: routes, schemas, dependencies
-├── domain/           # Domain Layer: pure business logic
-├── infrastructure/   # Infrastructure: Codeforces API, Redis
-└── services/         # Application Services: orchestration
-```
-
-**Principles:**
-- Async-first (httpx.AsyncClient, redis.asyncio)
-- Dependency Injection via Litestar
-- Deduplication: only first successful solve counts per problem
-- Redis caching (TTL: 4 hours)
-
-### Frontend
-
-```
-frontend/src/
-├── components/       # React components (Chart.js visualizations)
-├── services/         # API client
-└── types/            # TypeScript interfaces
-```
-
-**Principles:**
-- Parallel data fetching (Promise.all)
-- TypeScript strict mode
-- Tailwind CSS + custom Codeforces color palette
+- **[Getting Started](docs/DEVELOPMENT.md)** - Development setup and local installation
+- **[API Reference](docs/API.md)** - REST API documentation with examples
+- **[Architecture](docs/ARCHITECTURE.md)** - System design and technical details
+- **[Deployment](docs/DEPLOYMENT.md)** - Production deployment guide
+- **[Contributing](CONTRIBUTING.md)** - How to contribute to the project
 
 ---
 
-## Development
+## API Endpoints
 
-### Requirements
+All endpoints accept a Codeforces handle as a path parameter:
 
-- Python 3.13+ with `uv`
-- Node.js 20+ with `npm`
-- Redis
-- Or just Docker
+- `GET /difficulty-distribution/{handle}` - Problem count by rating
+- `GET /tag-ratings/{handle}` - Average/median ratings per topic
+- `GET /tag-ratings/{handle}/weak` - Weak topics with threshold filtering
+- `GET /abandoned-problems/by-tags/{handle}` - Failed attempts grouped by tags
+- `GET /abandoned-problems/by-ratings/{handle}` - Failed attempts grouped by difficulty
 
-### Install Dependencies
+Interactive documentation: **http://localhost:8000/schema/swagger**
+
+See **[API Reference](docs/API.md)** for detailed examples.
+
+---
+
+## Local Development
+
+**Requirements:** Docker and Docker Compose
 
 ```bash
-just install
+just build   # Build Docker images
+just up      # Start all services
+just logs    # View logs
+just down    # Stop services
 ```
 
-### Run Tests
-
-```bash
-# Backend
-cd backend && just test
-
-# Frontend
-cd frontend && just typecheck
-```
+For local development without Docker, see **[Development Guide](docs/DEVELOPMENT.md)**.
 
 ---
 
-## Commands
+## Contributing
 
-### Project (root)
+We welcome contributions! Please read **[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines on:
 
-| Command | Description |
-|---------|-------------|
-| `just` | List all commands |
-| `just up` | Start all services via Docker |
-| `just down` | Stop services |
-| `just logs` | View logs |
-| `just build` | Build Docker images |
-
-### Backend
-
-| Command | Description |
-|---------|-------------|
-| `just dev` | Dev server with hot reload |
-| `just test` | Run tests |
-| `just check` | Linting + typecheck |
-| `just lintfix` | Auto-fix linting issues |
-
-### Frontend
-
-| Command | Description |
-|---------|-------------|
-| `just dev` | Vite dev server |
-| `just build` | Production build |
-| `just lint` | ESLint check |
-| `just typecheck` | TypeScript check |
+- Branch naming conventions
+- Pull request workflow
+- CI requirements
+- Code review process
 
 ---
 
-MIT License
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## Support
+
+- **Live Demo**: https://betterforces.deyna.xyz
+- **Issues**: https://github.com/deyna256/betterforces/issues
+- **Discussions**: https://github.com/deyna256/betterforces/discussions
+
+---
+
+<div align="center">
+Made with ❤️ for the competitive programming community
+</div>

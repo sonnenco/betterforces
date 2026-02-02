@@ -6,6 +6,8 @@
 
 <div align="center">
 
+![Build](https://github.com/deyna256/betterforces/actions/workflows/build.yml/badge.svg)
+![Website](https://img.shields.io/website?url=https://betterforces.deyna.xyz)
 ![Python 3.13](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)
 ![Litestar](https://img.shields.io/badge/Litestar-green?style=for-the-badge&logo=lightning)
 ![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=for-the-badge&logo=typescript)

@@ -2,41 +2,35 @@ from typing import List
 
 from backend.domain.models.codeforces import Submission
 
+def _deduplicate_problems(submissions: List[Submission]) -> List[Submission]:
+    """
+    Keep only the first successful solve for each unique problem.
 
-class BaseMetricService:
-    """Base class for all metric services with shared functionality."""
+    Args:
+        submissions: List of submissions to deduplicate
 
-    @staticmethod
-    def _deduplicate_problems(submissions: List[Submission]) -> List[Submission]:
-        """
-        Keep only the first successful solve for each unique problem.
+    Returns:
+        List of submissions with only first solve per problem
+    """
+    seen_problems = set()
+    unique_submissions = []
 
-        Args:
-            submissions: List of submissions to deduplicate
+    for submission in submissions:
+        problem_key = submission.problem.problem_key
+        if problem_key not in seen_problems:
+            seen_problems.add(problem_key)
+            unique_submissions.append(submission)
 
-        Returns:
-            List of submissions with only first solve per problem
-        """
-        seen_problems = set()
-        unique_submissions = []
+    return unique_submissions
 
-        for submission in submissions:
-            problem_key = submission.problem.problem_key
-            if problem_key not in seen_problems:
-                seen_problems.add(problem_key)
-                unique_submissions.append(submission)
+def _filter_successful_submissions(submissions: List[Submission]) -> List[Submission]:
+    """
+    Filter submissions to only include solved problems.
 
-        return unique_submissions
+    Args:
+        submissions: List of all submissions
 
-    @staticmethod
-    def _filter_successful_submissions(submissions: List[Submission]) -> List[Submission]:
-        """
-        Filter submissions to only include solved problems.
-
-        Args:
-            submissions: List of all submissions
-
-        Returns:
-            List of only solved submissions
-        """
-        return [s for s in submissions if s.is_solved]
+    Returns:
+        List of only solved submissions
+    """
+    return [s for s in submissions if s.is_solved]

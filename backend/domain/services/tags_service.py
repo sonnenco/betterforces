@@ -6,10 +6,10 @@ from typing import List
 
 from backend.domain.models.codeforces import Submission
 from backend.domain.models.tags import TagInfo, TagsAnalysis
-from backend.domain.services.base import BaseMetricService
+from backend.domain.services.base import _deduplicate_problems, _filter_successful_submissions
 
 
-class TagsService(BaseMetricService):
+class TagsService():
     """Service for generating tags analytics."""
 
     @staticmethod
@@ -25,7 +25,7 @@ class TagsService(BaseMetricService):
             TagsAnalysis with analyzed data
         """
         # Filter successful submissions
-        successful_submissions = TagsService._filter_successful_submissions(submissions)
+        successful_submissions = _filter_successful_submissions(submissions)
 
         if not successful_submissions:
             return TagsAnalysis(
@@ -37,7 +37,7 @@ class TagsService(BaseMetricService):
             )
 
         # Remove duplicate problems (keep first solve)
-        unique_solves = TagsService._deduplicate_problems(successful_submissions)
+        unique_solves = _deduplicate_problems(successful_submissions)
 
         # Group problems by tags and calculate statistics
         tags_data, overall_ratings = TagsService._analyze_tags(unique_solves)

@@ -3,6 +3,7 @@ import { Header } from './components/layout/Header';
 import { MetricCard } from './components/layout/MetricCard';
 import { StatCard } from './components/layout/StatCard';
 import { AbandonedProblemsChart } from './components/charts/AbandonedProblemsChart';
+import { DailyActivityChart } from './components/charts/DailyActivityChart';
 import { DifficultyDistributionChart } from './components/charts/DifficultyDistributionChart';
 import { TagsChart } from './components/charts/TagsChart';
 import { TagsRadarChart } from './components/charts/TagsRadarChart';
@@ -16,27 +17,26 @@ function App() {
 
   const [handle, setHandle] = useState<string>('tourist');
 
+  const dailyActivity = useMetricData(handle, codeforcesApi.getDailyActivity);
   const difficulty = useMetricData(handle, codeforcesApi.getDifficultyDistribution);
   const tagRatingsRadar = useMetricData(handle, codeforcesApi.getTagRatings);
   const tagRatingsBar = useMetricData(handle, codeforcesApi.getTagRatings);
   const abandonedTags = useMetricData(handle, codeforcesApi.getAbandonedProblemsByTags);
   const abandonedRatings = useMetricData(handle, codeforcesApi.getAbandonedProblemsByRatings);
 
-  // Initial load: show full-page spinner only when we have no data yet
   const initialLoading =
     !difficulty.data && !tagRatingsRadar.data && (difficulty.loading || tagRatingsRadar.loading);
 
-  // Show first error encountered
   const error =
-    difficulty.error || tagRatingsRadar.error || tagRatingsBar.error || abandonedTags.error || abandonedRatings.error;
+    dailyActivity.error || difficulty.error || tagRatingsRadar.error || tagRatingsBar.error || abandonedTags.error || abandonedRatings.error;
 
-  // Stale if any metric reports stale
   const staleMetadata =
-    [difficulty, tagRatingsRadar, tagRatingsBar, abandonedTags, abandonedRatings].find(
+    [dailyActivity, difficulty, tagRatingsRadar, tagRatingsBar, abandonedTags, abandonedRatings].find(
       (m) => m.metadata.isStale
     )?.metadata ?? null;
 
   const handleRefresh = () => {
+    dailyActivity.refresh();
     difficulty.refresh();
     tagRatingsRadar.refresh();
     tagRatingsBar.refresh();
@@ -45,6 +45,7 @@ function App() {
   };
 
   const handleRetry = () => {
+    dailyActivity.refresh();
     difficulty.refresh();
     tagRatingsRadar.refresh();
     tagRatingsBar.refresh();
@@ -83,7 +84,6 @@ function App() {
           </div>
         )}
 
-        {/* Stale Data Warning */}
         {!initialLoading && !error && staleMetadata && (
           <div className="bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-300 dark:border-yellow-700 rounded-lg p-6 mb-8 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -120,7 +120,6 @@ function App() {
 
         {!initialLoading && !error && difficulty.data && tagRatingsRadar.data && (
           <>
-            {/* Stats Overview — always shows all-time values */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
               <StatCard
                 title="Total Solved"
@@ -145,13 +144,28 @@ function App() {
               />
             </div>
 
-            {/* Difficulty Distribution */}
+            {dailyActivity.data && (
+              <MetricCard
+                title="Daily Activity"
+                period={dailyActivity.period}
+                onPeriodChange={dailyActivity.setPeriod}
+                loading={dailyActivity.loading}
+                emptyMessage={dailyActivity.data.days.length === 0 ? 'No submissions found for this period.' : undefined}
+              >
+                <DailyActivityChart days={dailyActivity.data.days} isDark={isDark} />
+              </MetricCard>
+            )}
+
             <MetricCard
               title="Difficulty Distribution"
               period={difficulty.period}
               onPeriodChange={difficulty.setPeriod}
               loading={difficulty.loading}
-              emptyMessage={difficulty.data.total_solved === 0 ? 'No submissions found for this period.' : undefined}
+              emptyMessage={
+                difficulty.data.ranges.length === 0
+                  ? 'No solved problems for this period.'
+                  : undefined
+              }
             >
               <DifficultyDistributionChart
                 ranges={difficulty.data.ranges}
@@ -160,7 +174,6 @@ function App() {
               />
             </MetricCard>
 
-            {/* Tag Ratings - Radar Chart */}
             <MetricCard
               title="Tag Ratings — Radar"
               period={tagRatingsRadar.period}
@@ -177,7 +190,6 @@ function App() {
               <TagsRadarChart tags={tagRatingsRadar.data.tags} type="all" isDark={isDark} />
             </MetricCard>
 
-            {/* Tag Ratings - Bar Chart */}
             <MetricCard
               title="Tag Ratings — Bar"
               period={tagRatingsBar.period}
@@ -201,7 +213,6 @@ function App() {
               )}
             </MetricCard>
 
-            {/* Abandoned Problems by Tags */}
             {abandonedTags.data && (
               <MetricCard
                 title="Abandoned Problems by Tags"
@@ -214,7 +225,6 @@ function App() {
               </MetricCard>
             )}
 
-            {/* Abandoned Problems by Ratings */}
             {abandonedRatings.data && (
               <MetricCard
                 title="Abandoned Problems by Ratings"

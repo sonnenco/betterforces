@@ -26,7 +26,7 @@ up-prod:
 
 # Stop all services
 down:
-    docker compose down
+    docker compose --profile prod down
 
 # Restart services (dev)
 restart:
@@ -44,4 +44,4 @@ logs:
 
 # Stop services and remove volumes/images
 clean:
-    docker compose down -v --rmi local
+    docker compose --profile prod down -v --rmi local

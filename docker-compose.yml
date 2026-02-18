@@ -6,6 +6,7 @@ x-logging: &logging
 
 services:
   caddy:
+    profiles: [prod]
     image: caddy:2-alpine
     ports:
       - "80:80"

@@ -2,6 +2,12 @@
 default:
     @just --list
 
+# Copy example env files to their actual locations (run once on first setup)
+init:
+    cp -n envs/.env.backend.example envs/.env.backend
+    cp -n envs/.env.worker.example envs/.env.worker
+    cp -n envs/.env.caddy.example envs/.env.caddy
+
 # Build images for development
 build:
     docker compose build
@@ -12,11 +18,11 @@ up:
 
 # Build images for production
 build-prod:
-    docker compose -f docker-compose.yml build
+    docker compose -f docker-compose.yml --profile prod build
 
 # Start services for production
 up-prod:
-    docker compose -f docker-compose.yml up -d
+    docker compose -f docker-compose.yml --profile prod up -d
 
 # Stop all services
 down:

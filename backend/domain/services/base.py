@@ -2,19 +2,27 @@ from typing import List
 
 from backend.domain.models.codeforces import Submission
 
-class SubmissionProcessor:
-    """Deduplicates problems and filters successful submissions."""
+class SubmissionCollection:
+    """Encapsulates submissions with filtering and deduplication operations."""
 
-    def __init__(self,  submissions: List[Submission]):
+    def __init__(self, submissions: List[Submission]):
         """
-        Initialize the instance which contains submissions
+        Initialize an instance which contains original list of submissions and 
+        a working copy to filter and/or deduplicate.
         
         Args:
             submissions: List of submissions to perform operations on
         """
+        self._original_submissions = submissions
         self._submissions = submissions
 
-    def _deduplicate_problems(self) -> List[Submission]:
+    def reset_submissions(self) -> None:
+        """
+        Reset the working copy of submissions to the original list.
+        """
+        self._submissions = self._original_submissions
+    
+    def deduplicate_problems(self) -> List[Submission]:
         """
         Keep only the first successful solve for each unique problem.
 
@@ -33,7 +41,7 @@ class SubmissionProcessor:
         self._submissions = unique_submissions
         return self._submissions
 
-    def _filter_successful_submissions(self) -> List[Submission]:
+    def filter_successful_submissions(self) -> List[Submission]:
         """
         Filter submissions to only include solved problems.
 

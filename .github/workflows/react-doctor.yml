@@ -1,0 +1,27 @@
+name: React Doctor
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  react-doctor:
+    name: React Health Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run React Doctor
+        id: doctor
+        uses: millionco/react-doctor@main
+        with:
+          directory: frontend
+          verbose: 'true'
+
+      - name: Check health score
+        run: |
+          echo "React health score ${{ steps.doctor.outputs.score }}/100"
+          test ${{ steps.doctor.outputs.score }} -ge 95
